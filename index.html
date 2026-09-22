@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BEACON | Technology for Greater Human Independence</title>
+<meta name="description" content="BEACON develops STEWARD V.A., an AI-powered wearable vision assistant designed to help people who are blind or have low vision navigate everyday life with greater independence.">
+<meta name="theme-color" content="#0A4F53">
+<meta property="og:type" content="website">
+<meta property="og:title" content="BEACON | Technology for Greater Human Independence">
+<meta property="og:description" content="Meet STEWARD V.A.—a wearable AI vision assistant designed for greater everyday independence.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 36'%3E%3Cpath fill='%230E6E73' d='M16 0 32 9v18l-16 9L0 27V9z'/%3E%3Cpath fill='%23FBFAF7' d='m16 8 9 5v10l-9 5-9-5V13z'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #FBFAF7;
+    --bg-warm: #F6F4EF;
+    --bg-grey: #F0EFEA;
+    --ink: #1B1D1C;
+    --ink-soft: #52564F;
+    --ink-faint: #8A8D84;
+    --teal: #0E6E73;
+    --teal-deep: #0A4F53;
+    --teal-mist: #E3EFEE;
+    --gold: #AD8A4E;
+    --line: #E2DFD5;
+    --radius: 8px;
+    --shadow-sm: 0 12px 34px rgba(27,29,28,0.08);
+    --shadow-lg: 0 30px 80px rgba(17,48,49,0.16);
+    --maxw: 1180px;
+    --serif: 'Fraunces', serif;
+    --sans: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x:hidden;
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+  ul{list-style:none;}
+  button{font-family:inherit; cursor:pointer;}
+
+  :focus-visible{
+    outline: 2px solid var(--teal);
+    outline-offset: 3px;
+  }
+
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 32px;}
+  @media (max-width:640px){ .wrap{padding:0 20px;} }
+
+  .hex-field{
+    position:absolute; inset:0; z-index:0; pointer-events:none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='96' viewBox='0 0 84 96'%3E%3Cpath d='M42 0 L84 24 L84 72 L42 96 L0 72 L0 24 Z' fill='none' stroke='%230E6E73' stroke-opacity='0.06' stroke-width='1'/%3E%3C/svg%3E");
+    background-position: center top;
+    opacity: 0.9;
+  }
+  .hex-field.dense{
+    background-size: 64px 74px;
+  }
+  .hex-field.sparse{
+    background-size: 110px 126px;
+  }
+
+  /* ---------- Skip link ---------- */
+  .skip-link{
+    position:absolute; left:-999px; top:0; background:var(--ink); color:var(--bg);
+    padding:12px 20px; z-index:200;
+  }
+  .skip-link:focus{ left:20px; top:20px; }
+
+  /* ---------- Header ---------- */
+  header{
+    position:sticky; top:0; z-index:100;
+    background:rgba(251,250,247,0.92);
+    backdrop-filter: blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-row{
+    display:flex; align-items:center; justify-content:space-between;
+    height:78px;
+  }
+  .logo{
+    font-family: var(--serif);
+    font-weight:600; font-size:1.35rem; letter-spacing:0.01em;
+    display:flex; align-items:center; gap:10px;
+  }
+  .logo-mark{
+    width:20px; height:22px;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    background: var(--teal);
+    flex-shrink:0;
+    position:relative;
+    transition: transform .4s cubic-bezier(.2,.8,.2,1);
+  }
+  .logo-mark::after{
+    content:""; position:absolute; inset:5px;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    background: var(--bg);
+  }
+  .logo:hover .logo-mark{ transform: rotate(30deg); }
+  nav.primary-nav{ display:flex; align-items:center; gap:2px; }
+  nav.primary-nav button.navlink{
+    background:none; border:none; font-size:0.95rem; color:var(--ink-soft);
+    padding:10px 14px; border-radius:var(--radius); transition: color .15s ease;
+  }
+  nav.primary-nav button.navlink:hover{ color:var(--ink); }
+  nav.primary-nav button.navlink[aria-current="page"]{ color:var(--ink); font-weight:600; }
+  .nav-cta{
+    background:var(--ink); color:var(--bg); padding:11px 20px; border-radius:var(--radius);
+    font-size:0.9rem; font-weight:600; border:none; margin-left:8px; transition: background .15s ease;
+  }
+  .nav-cta:hover{ background:var(--teal-deep); }
+  .menu-toggle{ display:none; background:none; border:none; padding:8px; }
+  .menu-toggle svg{ width:24px; height:24px; }
+
+  @media (max-width: 1060px){
+    nav.primary-nav{
+      display:none; position:fixed; inset:78px 0 0 0; background:var(--bg);
+      flex-direction:column; align-items:flex-start; padding:24px 20px; gap:4px;
+      overflow-y:auto;
+    }
+    nav.primary-nav.open{ display:flex; }
+    nav.primary-nav button.navlink{ width:100%; text-align:left; padding:14px 8px; font-size:1.05rem; border-bottom:1px solid var(--line); }
+    .nav-cta{ margin:16px 8px 0; }
+    .menu-toggle{ display:block; }
+  }
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:14px 26px; border-radius:var(--radius);
+    font-size:0.95rem; font-weight:600; border:1px solid transparent;
+    transition: transform .2s ease, background .2s ease, color .2s ease, border-color .2s ease;
+  }
+  .btn:hover{ transform:translateY(-2px); }
+  .btn-primary{ background:var(--teal); color:#fff; }
+  .btn-primary:hover{ background:var(--teal-deep); }
+  .btn-ghost{ background:transparent; color:var(--ink); border-color:var(--ink); }
+  .btn-ghost:hover{ background:var(--ink); color:var(--bg); }
+  .btn-row{ display:flex; gap:14px; flex-wrap:wrap; }
+
+  /* ---------- Sections ---------- */
+  .page{ display:none; }
+  .page.active{ display:block; animation: fadein .5s ease; }
+  @keyframes fadein{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  section{ padding: 96px 0; position:relative; }
+  section.tight{ padding: 64px 0; }
+  section.on-warm{ background:var(--bg-warm); }
+  section.on-grey{ background:var(--bg-grey); }
+  section.on-teal{ background:var(--teal-deep); color:#fff; }
+  @media (max-width:640px){
+    section{ padding:64px 0; }
+    section.tight{ padding:44px 0; }
+  }
+
+  .label{
+    font-size:0.85rem; color:var(--teal); font-weight:700; letter-spacing:0.02em;
+    margin-bottom:18px; display:block;
+  }
+  h1{ font-family:var(--serif); font-weight:600; font-size:clamp(2.4rem, 5vw, 4.2rem); line-height:1.06; letter-spacing:-0.01em; }
+  h2{ font-family:var(--serif); font-weight:600; font-size:clamp(1.9rem, 3.4vw, 2.7rem); line-height:1.12; letter-spacing:-0.01em; }
+  h3{ font-family:var(--serif); font-weight:500; font-size:1.35rem; line-height:1.25; }
+  p{ color:var(--ink-soft); font-size:1.05rem; max-width:60ch; }
+  .lede{ font-size:1.2rem; max-width:52ch; }
+  .center{ text-align:center; margin-left:auto; margin-right:auto; }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    padding-top:88px; padding-bottom:56px; overflow:hidden;
+  }
+  .hero-grid{
+    display:grid; grid-template-columns: 1.05fr 0.95fr; gap:56px; align-items:center;
+    position:relative; z-index:1;
+  }
+  @media (max-width: 860px){ .hero-grid{ grid-template-columns:1fr; } }
+
+  .device-art{
+    position:relative; aspect-ratio: 4/5; background: linear-gradient(155deg, var(--teal-mist), var(--bg-warm));
+    border-radius:6px; display:flex; align-items:center; justify-content:center; overflow:hidden;
+    border:1px solid var(--line);
+  }
+  .device-art svg{ width:62%; height:auto; }
+  .device-caption{
+    position:absolute; bottom:18px; left:18px; right:18px; font-size:0.78rem; color:var(--ink-faint);
+    background:rgba(251,250,247,0.85); padding:6px 10px; border-radius:2px;
+  }
+  .product-banner{ position:relative; aspect-ratio:21/9; overflow:hidden; border-radius:14px; box-shadow:var(--shadow-lg); background:var(--bg-grey); }
+  .product-banner img{ width:100%; height:100%; object-fit:cover; }
+  .product-banner .device-caption{ color:var(--ink); }
+
+  /* ---------- Market-ready home hero ---------- */
+  .status-pill{
+    display:inline-flex; align-items:center; gap:9px; padding:8px 12px;
+    border:1px solid rgba(14,110,115,.22); border-radius:999px;
+    color:var(--teal-deep); background:rgba(227,239,238,.7);
+    font-size:.76rem; font-weight:700; letter-spacing:.025em; margin-bottom:22px;
+  }
+  .status-pill::before{ content:""; width:7px; height:7px; border-radius:50%; background:var(--gold); box-shadow:0 0 0 4px rgba(173,138,78,.14); }
+  .hero-copy h1{ max-width:10.8ch; }
+  .hero-copy .lede{ margin-top:22px; }
+  .hero-actions{ margin-top:32px; }
+  .hero-note{ display:flex; gap:10px; align-items:flex-start; margin-top:24px; color:var(--ink-faint); font-size:.78rem; max-width:45ch; }
+  .hero-note svg{ width:17px; flex:0 0 17px; margin-top:2px; }
+  .hero-photo{
+    position:relative; min-height:620px; border-radius:18px; overflow:hidden;
+    box-shadow:var(--shadow-lg); background:var(--teal-mist);
+  }
+  .hero-photo img{ width:100%; height:100%; position:absolute; inset:0; object-fit:cover; }
+  .hero-photo::after{ content:""; position:absolute; inset:45% 0 0; background:linear-gradient(transparent,rgba(5,29,30,.72)); pointer-events:none; }
+  .hero-photo-card{ position:absolute; z-index:2; left:22px; right:22px; bottom:22px; padding:18px 20px; border:1px solid rgba(255,255,255,.24); background:rgba(6,45,47,.78); color:#fff; backdrop-filter:blur(12px); border-radius:12px; }
+  .hero-photo-card strong{ display:block; font-family:var(--serif); font-size:1.15rem; font-weight:500; }
+  .hero-photo-card span{ display:block; color:#D6E9E7; font-size:.82rem; margin-top:3px; }
+  .proof-bar{ position:relative; z-index:2; display:grid; grid-template-columns:repeat(4,1fr); margin-top:72px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .proof-item{ padding:22px 24px; border-right:1px solid var(--line); }
+  .proof-item:first-child{ padding-left:0; }
+  .proof-item:last-child{ border-right:0; }
+  .proof-item strong{ display:block; font-size:.88rem; color:var(--ink); }
+  .proof-item span{ display:block; margin-top:3px; color:var(--ink-faint); font-size:.76rem; }
+  @media(max-width:860px){
+    .hero-photo{ min-height:560px; max-width:620px; }
+    .proof-bar{ grid-template-columns:repeat(2,1fr); margin-top:52px; }
+    .proof-item:nth-child(2){ border-right:0; }
+    .proof-item:nth-child(-n+2){ border-bottom:1px solid var(--line); }
+  }
+  @media(max-width:520px){
+    .hero{ padding-top:58px; }
+    .hero-photo{ min-height:480px; }
+    .proof-bar{ grid-template-columns:1fr; }
+    .proof-item,.proof-item:first-child{ padding:16px 0; border-right:0; border-bottom:1px solid var(--line); }
+  }
+
+  /* ---------- Editorial gallery ---------- */
+  .gallery-head{ display:flex; align-items:end; justify-content:space-between; gap:28px; margin-bottom:34px; }
+  .gallery-head p{ max-width:44ch; }
+  .gallery-grid{ display:grid; grid-template-columns:repeat(12,1fr); grid-template-rows:300px 300px; gap:16px; }
+  .gallery-card{ position:relative; overflow:hidden; border-radius:12px; background:var(--bg-grey); border:0; text-align:left; padding:0; color:#fff; box-shadow:var(--shadow-sm); }
+  .gallery-card:nth-child(1){ grid-column:span 5; grid-row:span 2; }
+  .gallery-card:nth-child(2),.gallery-card:nth-child(3){ grid-column:span 7; }
+  .gallery-card img{ width:100%; height:100%; object-fit:cover; transition:transform .7s cubic-bezier(.2,.8,.2,1); }
+  .gallery-card:nth-child(3) img{ object-position:center 58%; }
+  .gallery-card::after{ content:""; position:absolute; inset:42% 0 0; background:linear-gradient(transparent,rgba(8,25,25,.84)); pointer-events:none; }
+  .gallery-card:hover img{ transform:scale(1.035); }
+  .gallery-card:focus-visible{ outline:3px solid var(--gold); outline-offset:3px; }
+  .gallery-copy{ position:absolute; z-index:2; left:22px; right:22px; bottom:20px; }
+  .gallery-copy span{ display:block; color:#CDE1DF; font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-bottom:5px; }
+  .gallery-copy strong{ font-family:var(--serif); font-size:1.25rem; font-weight:500; line-height:1.2; }
+  .gallery-zoom{ position:absolute; z-index:3; top:16px; right:16px; width:38px; height:38px; display:grid; place-items:center; border-radius:50%; background:rgba(251,250,247,.9); color:var(--ink); box-shadow:0 6px 20px rgba(0,0,0,.12); }
+  .gallery-zoom svg{ width:17px; }
+  .gallery-note{ margin-top:16px; color:var(--ink-faint); font-size:.76rem; }
+  @media(max-width:760px){
+    .gallery-head{ align-items:flex-start; flex-direction:column; }
+    .gallery-grid{ grid-template-columns:1fr; grid-template-rows:none; }
+    .gallery-card:nth-child(n){ grid-column:auto; grid-row:auto; min-height:360px; }
+  }
+
+  .lightbox{ position:fixed; inset:0; z-index:300; display:none; align-items:center; justify-content:center; padding:28px; background:rgba(8,20,20,.94); }
+  .lightbox.open{ display:flex; animation:fadein .2s ease; }
+  .lightbox figure{ max-width:min(1100px,92vw); margin:0; }
+  .lightbox img{ max-height:82vh; width:auto; border-radius:10px; box-shadow:0 30px 100px rgba(0,0,0,.4); }
+  .lightbox figcaption{ color:#D5DEDB; font-size:.9rem; margin-top:12px; }
+  .lightbox-close{ position:absolute; top:22px; right:22px; width:44px; height:44px; border:1px solid rgba(255,255,255,.25); border-radius:50%; background:rgba(255,255,255,.1); color:#fff; font-size:1.5rem; }
+
+  .principle-band{ display:grid; grid-template-columns:.75fr 1.25fr; gap:50px; align-items:center; }
+  .principle-band blockquote{ font-family:var(--serif); font-size:clamp(1.65rem,3vw,2.45rem); line-height:1.25; color:var(--ink); }
+  .principle-band blockquote span{ color:var(--teal); }
+  @media(max-width:700px){ .principle-band{ grid-template-columns:1fr; gap:24px; } }
+
+  /* ---------- Feature grid ---------- */
+  .feature-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:var(--line); border:1px solid var(--line); margin-top:56px; }
+  .feature-cell{ background:var(--bg); padding:36px 26px; }
+  .feature-cell .fnum{ font-family:var(--serif); font-size:1rem; color:var(--teal); margin-bottom:14px; }
+  .feature-cell h3{ margin-bottom:8px; font-size:1.15rem; }
+  .feature-cell p{ font-size:0.94rem; max-width:none; }
+  @media (max-width:900px){ .feature-grid{ grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:520px){ .feature-grid{ grid-template-columns:1fr; } }
+
+  /* ---------- Pillars ---------- */
+  .pillar-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:40px; margin-top:52px; }
+  @media (max-width:900px){ .pillar-grid{ grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:520px){ .pillar-grid{ grid-template-columns:1fr; } }
+  .pillar h3{ margin-bottom:10px; }
+  .pillar p{ font-size:0.96rem; }
+
+  /* ---------- Stats ---------- */
+  .stat-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:40px; margin-top:52px; }
+  @media (max-width:700px){ .stat-row{ grid-template-columns:1fr; gap:32px; } }
+  .stat-num{ font-family:var(--serif); font-size:clamp(2.6rem,5vw,3.6rem); color:var(--teal); line-height:1; }
+  .stat-label{ margin-top:10px; font-size:0.98rem; color:var(--ink-soft); max-width:32ch; }
+  .stage-note{
+    margin-top:44px; padding:16px 20px; border-left:3px solid var(--gold);
+    background:var(--bg-warm); font-size:0.92rem; color:var(--ink-soft); max-width:70ch;
+  }
+
+  /* ---------- Timeline ---------- */
+  .timeline{ display:flex; flex-wrap:wrap; gap:0; margin-top:56px; }
+  .tl-step{
+    flex:1 1 150px; padding:20px 18px 20px 0; position:relative; border-top:2px solid var(--line);
+  }
+  .tl-step.done{ border-top-color:var(--teal); }
+  .tl-step.now{ border-top-color:var(--gold); }
+  .tl-dot{
+    width:11px; height:11px; border-radius:50%; background:var(--line); position:absolute; top:-6.5px; left:0;
+  }
+  .tl-step.done .tl-dot{ background:var(--teal); }
+  .tl-step.now .tl-dot{ background:var(--gold); }
+  .tl-step h4{ font-family:var(--serif); font-size:1rem; font-weight:500; margin:14px 0 6px; }
+  .tl-step .tl-tag{ font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-faint); }
+  .tl-step.done .tl-tag{ color:var(--teal); }
+  .tl-step.now .tl-tag{ color:var(--gold); }
+
+  /* ---------- Capability rows ---------- */
+  .cap-row{
+    display:grid; grid-template-columns: 0.9fr 1.1fr; gap:48px; align-items:center;
+    padding:48px 0; border-top:1px solid var(--line);
+  }
+  .cap-row:last-child{ border-bottom:1px solid var(--line); }
+  @media (max-width:800px){ .cap-row{ grid-template-columns:1fr; gap:20px; } }
+  .cap-row .cap-index{ font-family:var(--serif); color:var(--teal-mist); font-size:3.2rem; line-height:1; }
+  .cap-visual{
+    aspect-ratio:16/10; background:var(--bg-grey); border-radius:4px; display:flex; align-items:center; justify-content:center;
+    border:1px solid var(--line);
+  }
+  .cap-visual svg{ width:40%; }
+
+  /* ---------- Process steps ---------- */
+  .process-list{ margin-top:52px; display:flex; flex-direction:column; }
+  .process-item{ display:grid; grid-template-columns:60px 1fr; gap:24px; padding:26px 0; border-top:1px solid var(--line); }
+  .process-item:last-child{ border-bottom:1px solid var(--line); }
+  .process-item .p-mark{ font-family:var(--serif); color:var(--teal); font-size:1.1rem; }
+
+  /* ---------- Before/after feedback ---------- */
+  .feedback-card{
+    display:grid; grid-template-columns:1fr auto 1fr; gap:24px; align-items:center;
+    padding:32px; background:var(--bg-warm); border-radius:4px; margin-bottom:20px;
+  }
+  @media (max-width:700px){ .feedback-card{ grid-template-columns:1fr; text-align:left; } }
+  .feedback-card .arrow{ font-size:1.4rem; color:var(--gold); text-align:center; }
+  .feedback-card .ftag{ font-size:0.78rem; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink-faint); margin-bottom:8px; }
+  .feedback-card h4{ font-family:var(--serif); font-weight:500; font-size:1.05rem; margin-bottom:6px; }
+  .feedback-card p{ font-size:0.93rem; max-width:none; }
+
+  /* ---------- Pilot placeholder table ---------- */
+  .pilot-table{ margin-top:40px; display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line); }
+  @media (max-width:700px){ .pilot-table{ grid-template-columns:repeat(2,1fr); } }
+  .pilot-cell{ background:var(--bg); padding:26px 20px; }
+  .pilot-cell .pv{ font-family:var(--serif); font-size:1.5rem; color:var(--ink-faint); }
+  .pilot-cell .pl{ font-size:0.85rem; color:var(--ink-soft); margin-top:6px; }
+
+  /* ---------- Team ---------- */
+  .team-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:36px; margin-top:52px; }
+  @media (max-width:820px){ .team-grid{ grid-template-columns:1fr; } }
+  .team-card{ border:1px solid var(--line); border-radius:4px; overflow:hidden; background:var(--bg); }
+  .team-photo{
+    aspect-ratio:1/1; background:linear-gradient(150deg,var(--teal-mist),var(--bg-grey));
+    display:flex; align-items:center; justify-content:center;
+  }
+  .team-photo span{ font-family:var(--serif); font-size:2.4rem; color:var(--teal); }
+  .team-body{ padding:24px; }
+  .team-body h3{ margin-bottom:2px; }
+  .team-role{ color:var(--teal); font-size:0.92rem; font-weight:600; margin-bottom:14px; }
+  .team-body ul{ font-size:0.9rem; color:var(--ink-soft); display:flex; flex-direction:column; gap:5px; }
+  .team-body li::before{ content:"– "; color:var(--ink-faint); }
+  .team-add-card{ border:1px dashed var(--line); border-radius:4px; display:flex; align-items:center; justify-content:center; min-height:180px; color:var(--ink-faint); font-size:0.9rem; text-align:center; padding:24px; }
+
+  .discipline-row{ display:flex; align-items:center; justify-content:center; gap:18px; margin:56px 0; flex-wrap:wrap; }
+  .discipline-row span.d{ font-family:var(--serif); font-size:1.5rem; }
+  .discipline-row span.x{ color:var(--teal); font-size:1.1rem; }
+
+  /* ---------- Approach steps (about) ---------- */
+  .approach-track{ display:flex; flex-direction:column; margin-top:52px; }
+  .approach-node{ display:flex; gap:24px; padding:0 0 8px; }
+  .approach-node .rail{ display:flex; flex-direction:column; align-items:center; }
+  .approach-node .rail .dot{ width:12px; height:12px; border-radius:50%; background:var(--teal); flex-shrink:0; }
+  .approach-node .rail .line{ width:1px; flex:1; background:var(--line); margin:6px 0; }
+  .approach-node:last-child .rail .line{ display:none; }
+  .approach-node .abody{ padding-bottom:36px; }
+  .approach-node h4{ font-family:var(--serif); font-weight:500; font-size:1.15rem; margin-bottom:6px; }
+
+  .story-line{ font-size:1.15rem; color:var(--ink); margin-bottom:6px; font-family:var(--serif); }
+
+  .partner-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:24px; margin-top:44px; }
+  @media (max-width:640px){ .partner-grid{ grid-template-columns:1fr; } }
+  .partner-card{ border:1px solid var(--line); border-radius:4px; padding:24px; }
+  .partner-tag{ font-size:0.76rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--teal); margin-bottom:10px; display:block; }
+
+  /* ---------- Contact ---------- */
+  .contact-grid{ display:grid; grid-template-columns:1fr 1.1fr; gap:60px; margin-top:16px; align-items:start; }
+  @media (max-width:900px){ .contact-grid{ grid-template-columns:1fr; } }
+  .cat-list{ display:flex; flex-direction:column; gap:2px; }
+  .cat-item{ padding:16px 0; border-bottom:1px solid var(--line); font-size:1rem; }
+  .cat-item strong{ display:block; margin-bottom:2px; }
+  .cat-item span{ font-size:0.88rem; color:var(--ink-faint); }
+
+  form.contact-form{ display:flex; flex-direction:column; gap:18px; }
+  .form-row{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  @media (max-width:520px){ .form-row{ grid-template-columns:1fr; } }
+  .field label{ display:block; font-size:0.88rem; font-weight:600; margin-bottom:6px; }
+  .field input, .field select, .field textarea{
+    width:100%; padding:13px 14px; border:1px solid var(--line); border-radius:2px; font-family:inherit; font-size:0.96rem;
+    background:var(--bg); color:var(--ink);
+  }
+  .field textarea{ min-height:120px; resize:vertical; }
+  .field input:focus, .field select:focus, .field textarea:focus{ outline:2px solid var(--teal); outline-offset:1px; border-color:var(--teal); }
+  .form-note{ font-size:0.85rem; color:var(--ink-faint); margin-top:4px; }
+
+  /* ---------- Footer ---------- */
+  footer{ background:var(--ink); color:var(--bg-warm); padding:64px 0 32px; }
+  .foot-grid{ display:grid; grid-template-columns:1.3fr 1fr 1fr; gap:40px; padding-bottom:40px; border-bottom:1px solid rgba(255,255,255,0.14); }
+  @media (max-width:760px){ .foot-grid{ grid-template-columns:1fr; gap:32px; } }
+  footer .logo{ color:var(--bg-warm); }
+  .foot-tag{ margin-top:14px; font-size:0.95rem; color:#B9BCB2; max-width:34ch; }
+  .foot-col h4{ font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; color:#9A9D93; margin-bottom:16px; }
+  .foot-col ul{ display:flex; flex-direction:column; gap:10px; }
+  .foot-col a{ color:#D8DACF; font-size:0.94rem; }
+  .foot-col a:hover{ color:#fff; }
+  .foot-bottom{ padding-top:28px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:16px; font-size:0.82rem; color:#8C8F84; }
+  .foot-disclaimer{ max-width:640px; }
+
+  .cta-final{ text-align:center; }
+  .cta-final h2{ margin-bottom:16px; }
+  .cta-final p{ margin:0 auto 32px; }
+
+  .divider{ height:1px; background:var(--line); border:none; margin:0; }
+  .section-head{ max-width:640px; margin-bottom:8px; }
+  .section-head.wide{ max-width:760px; }
+
+  /* ---------- Signature hexagon motif ---------- */
+  .hex-num{
+    position:relative; width:112px; height:128px; display:flex; align-items:center; justify-content:center;
+  }
+  .hex-num svg{ position:absolute; inset:0; width:100%; height:100%; }
+  .hex-num .hex-value{ position:relative; z-index:1; font-family:var(--serif); font-size:1.8rem; color:var(--teal); }
+  .stat-block{ display:flex; flex-direction:column; align-items:flex-start; gap:16px; }
+  .stat-block .stat-label{ margin-top:0; }
+
+  .hex-icon{
+    width:54px; height:62px; position:relative; margin-bottom:18px;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    background: linear-gradient(155deg, var(--teal-mist), var(--bg-warm));
+    border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    transition: transform .35s cubic-bezier(.2,.8,.2,1), background .35s ease;
+  }
+  .feature-cell:hover .hex-icon{ transform: translateY(-4px) rotate(4deg); background: linear-gradient(155deg, var(--teal), var(--teal-deep)); }
+  .feature-cell:hover .hex-icon svg *{ stroke:#fff !important; }
+  .hex-icon svg{ width:26px; height:26px; }
+
+  /* Reveal-on-scroll: one quiet entrance, not per-card */
+  .reveal{ opacity:0; transform: translateY(18px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1); }
+  .reveal.in-view{ opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce){ .reveal{ opacity:1; transform:none; transition:none; } }
+
+  .pulse-dot{ animation: pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(173,138,78,0.5);} 50%{ box-shadow:0 0 0 6px rgba(173,138,78,0);} }
+  @media (prefers-reduced-motion: reduce){ .pulse-dot{ animation:none; } }
+
+  .glow-field{
+    position:absolute; inset:0; z-index:0; pointer-events:none;
+    background: radial-gradient(480px circle at var(--gx,50%) var(--gy,20%), rgba(14,110,115,0.10), transparent 60%);
+    transition: background .3s ease;
+  }
+
+  .draw-line{ stroke-dasharray: 340; stroke-dashoffset:340; transition: stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1); }
+  .device-art.in-view .draw-line{ stroke-dashoffset:0; }
+
+  .kinetic-word{ display:inline-block; transition: color .2s ease; }
+  .kinetic-word:hover{ color:var(--teal); }
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to content</a>
+
+<header>
+  <div class="wrap nav-row">
+    <a href="#" class="logo" onclick="go('home');return false;">
+      <span class="logo-mark" aria-hidden="true"></span> BEACON
+    </a>
+    <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="primaryNav" aria-label="Open menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <nav class="primary-nav" id="primaryNav" aria-label="Primary">
+      <button class="navlink" data-page="steward" onclick="go('steward')">STEWARD V.A.</button>
+      <button class="navlink" data-page="technology" onclick="go('technology')">Technology</button>
+      <button class="navlink" data-page="impact" onclick="go('impact')">Impact</button>
+      <button class="navlink" onclick="showGallery()">Gallery</button>
+      <button class="navlink" data-page="progress" onclick="go('progress')">Progress</button>
+      <button class="navlink" data-page="team" onclick="go('team')">Team</button>
+      <button class="navlink" data-page="about" onclick="go('about')">About</button>
+      <button class="navlink" data-page="contact" onclick="go('contact')">Contact</button>
+      <button class="nav-cta" onclick="go('contact')">Contact Us</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ============ HOME ============ -->
+<div class="page active" id="page-home">
+
+  <section class="hero">
+    <div class="hex-field sparse" aria-hidden="true" style="height:640px;"></div>
+    <div class="glow-field" id="heroGlow" aria-hidden="true"></div>
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <span class="status-pill">Pilot partnerships now opening</span>
+        <h1>A clearer world. <span class="kinetic-word">Within reach.</span></h1>
+        <p class="lede">STEWARD V.A. is a wearable AI vision assistant designed with people who are blind or have low vision—turning visual information into useful, timely audio guidance.</p>
+        <div class="btn-row hero-actions">
+          <button class="btn btn-primary" onclick="go('steward')">Explore STEWARD</button>
+          <button class="btn btn-ghost" onclick="showGallery()">View gallery</button>
+        </div>
+        <div class="hero-note">
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2.5 16.5 6v8L10 17.5 3.5 14V6L10 2.5Z" stroke="currentColor"/><path d="m7 10 2 2 4-4" stroke="currentColor" stroke-width="1.4"/></svg>
+          <span>Prototype validated with visually impaired participants in Ghana.</span>
+        </div>
+      </div>
+      <div class="hero-photo reveal">
+        <img src="./assets/images/Steward_VA.jpeg" width="1122" height="1402" alt="A blind man using a white cane and wearing a compact assistive device while walking outdoors" fetchpriority="high">
+        <div class="hero-photo-card">
+          <strong>Designed for life in motion.</strong>
+          <span>Wearable, discreet and built around everyday confidence.</span>
+        </div>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="proof-bar" aria-label="Product highlights">
+        <div class="proof-item"><strong>Designed in Ghana</strong><span>For local environments</span></div>
+        <div class="proof-item"><strong>Offline-capable</strong><span>Core functions stay useful</span></div>
+        <div class="proof-item"><strong>User-informed</strong><span>Built through direct feedback</span></div>
+        <div class="proof-item"><strong>87% accuracy</strong><span>Prototype object detection</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="on-warm">
+    <div class="wrap principle-band">
+      <div>
+        <span class="label">Our design principle</span>
+        <p>Useful technology begins by listening. Every decision—from tactile controls to offline capability—is shaped around real routines and real environments.</p>
+      </div>
+      <blockquote>Technology should not ask people to adapt. It should <span>expand what they can do.</span></blockquote>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <span class="label">The Product</span>
+        <h2>Meet STEWARD V.A.</h2>
+        <p style="margin-top:12px;">AI-powered assistance, designed for everyday independence.</p>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-cell">
+          <div class="hex-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z" stroke="#0E6E73" stroke-width="1.6"/><circle cx="12" cy="12" r="3" stroke="#0E6E73" stroke-width="1.6"/></svg></div>
+          <h3>See</h3><p>Object and scene recognition.</p>
+        </div>
+        <div class="feature-cell">
+          <div class="hex-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 4h9l5 5v11H5V4Z" stroke="#0E6E73" stroke-width="1.6"/><path d="M9 12h6M9 16h6" stroke="#0E6E73" stroke-width="1.6"/></svg></div>
+          <h3>Read</h3><p>Text and document reading.</p>
+        </div>
+        <div class="feature-cell">
+          <div class="hex-icon"><svg viewBox="0 0 24 24" fill="none"><rect x="2.5" y="6" width="19" height="12" rx="1.5" stroke="#0E6E73" stroke-width="1.6"/><circle cx="12" cy="12" r="3" stroke="#0E6E73" stroke-width="1.6"/></svg></div>
+          <h3>Recognize</h3><p>Supported currency recognition.</p>
+        </div>
+        <div class="feature-cell">
+          <div class="hex-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2 L15 11 L12 22 L9 11 Z" stroke="#0E6E73" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+          <h3>Navigate</h3><p>Navigation assistance.</p>
+        </div>
+        <div class="feature-cell">
+          <div class="hex-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="7" cy="12" r="2.4" fill="#0E6E73"/><path d="M11.5 12c2.5 0 5-3 5-6M11.5 12c2.5 0 5 3 5 6" stroke="#0E6E73" stroke-width="1.6"/></svg></div>
+          <h3>Sense</h3><p>Sensor-based obstacle detection.</p>
+        </div>
+      </div>
+      <div style="margin-top:36px;">
+        <button class="btn btn-ghost" onclick="go('steward')">Explore STEWARD V.A.</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="on-warm" id="gallery-home">
+    <div class="wrap">
+      <div class="gallery-head">
+        <div>
+          <span class="label">In the real world</span>
+          <h2>Designed around people,<br>not just technology.</h2>
+        </div>
+        <p>From movement through busy spaces to hands-on product feedback, STEWARD is being shaped for the moments that make up everyday life.</p>
+      </div>
+      <div class="gallery-grid" aria-label="STEWARD V.A. image gallery">
+        <button class="gallery-card" type="button" data-full="./assets/images/Steward_VA.jpeg" data-caption="Independent movement — a discreet wearable designed for everyday journeys.">
+          <img src="./assets/images/Steward_VA.jpeg" width="1122" height="1402" alt="A blind man walking independently with a white cane" loading="lazy">
+          <span class="gallery-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="6"/><path d="m16 16 5 5M11 8v6M8 11h6"/></svg></span>
+          <span class="gallery-copy"><span>Everyday independence</span><strong>Confidence in motion</strong></span>
+        </button>
+        <button class="gallery-card" type="button" data-full="assets/images/gbu.jpeg" data-caption="Co-design in practice — listening, testing and refining with users at the centre.">
+          <img src="./assets/images/gbu.jpeg" width="1536" height="1024" alt="A blind woman discussing an assistive device with a product team" loading="lazy">
+          <span class="gallery-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="6"/><path d="m16 16 5 5M11 8v6M8 11h6"/></svg></span>
+          <span class="gallery-copy"><span>Co-design</span><strong>Built with users, from the start</strong></span>
+        </button>
+        <button class="gallery-card" type="button" data-full="assets/images/uvt.jpeg" data-caption="STEWARD V.A. concept — compact, tactile and intentionally simple.">
+          <img src="./assets/images/uvt.jpeg" width="1536" height="1024" alt="Close-up concept of the compact STEWARD wearable device" loading="lazy">
+          <span class="gallery-zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="6"/><path d="m16 16 5 5M11 8v6M8 11h6"/></svg></span>
+          <span class="gallery-copy"><span>Industrial design</span><strong>Simple by intention</strong></span>
+        </button>
+      </div>
+      <p class="gallery-note">Concept imagery shown for product storytelling; final device design may evolve through pilot development.</p>
+    </div>
+  </section>
+
+  <section class="on-grey">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Built for real-world African environments.</h2>
+      </div>
+      <div class="pillar-grid">
+        <div class="pillar"><h3>Offline-capable</h3><p>Selected functions are designed to operate without continuous internet connectivity.</p></div>
+        <div class="pillar"><h3>Localized</h3><p>Developed with African users, environments and Ghanaian currency in mind.</p></div>
+        <div class="pillar"><h3>Accessible</h3><p>Designed around simple physical controls and audio feedback.</p></div>
+        <div class="pillar"><h3>User-informed</h3><p>Product development is guided by feedback from real users.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Built with users. Improved through evidence.</h2>
+      </div>
+      <div class="stat-row">
+        <div class="stat-block">
+          <div class="hex-num"><svg viewBox="0 0 112 128"><path d="M56 2 L110 32 L110 96 L56 126 L2 96 L2 32 Z" fill="none" stroke="#0E6E73" stroke-width="1.6"/></svg><span class="hex-value" data-count="6" data-suffix="">0</span></div>
+          <div class="stat-label">Visually impaired participants involved in structured user validation.</div>
+        </div>
+        <div class="stat-block">
+          <div class="hex-num"><svg viewBox="0 0 112 128"><path d="M56 2 L110 32 L110 96 L56 126 L2 96 L2 32 Z" fill="none" stroke="#0E6E73" stroke-width="1.6"/></svg><span class="hex-value" data-count="87" data-suffix="%">0%</span></div>
+          <div class="stat-label">Measured object-detection accuracy during prototype validation.</div>
+        </div>
+        <div class="stat-block">
+          <div class="hex-num"><svg viewBox="0 0 112 128"><path d="M56 2 L110 32 L110 96 L56 126 L2 96 L2 32 Z" fill="none" stroke="#0E6E73" stroke-width="1.6"/></svg><span class="hex-value" data-count="92" data-suffix="%">0%</span></div>
+          <div class="stat-label">Measured currency-recognition accuracy during prototype validation.</div>
+        </div>
+      </div>
+      <div class="stage-note">Prototype-stage validation results. Performance continues to be evaluated through pilot testing.</div>
+    </div>
+  </section>
+
+  <section class="on-warm">
+    <div class="wrap">
+      <div class="section-head"><h2>From idea to product.</h2></div>
+      <div class="timeline">
+        <div class="tl-step done"><div class="tl-dot"></div><span class="tl-tag">Achieved</span><h4>Concept</h4></div>
+        <div class="tl-step done"><div class="tl-dot"></div><span class="tl-tag">Achieved</span><h4>Prototype</h4></div>
+        <div class="tl-step done"><div class="tl-dot"></div><span class="tl-tag">Achieved</span><h4>User Validation</h4></div>
+        <div class="tl-step now"><div class="tl-dot"></div><span class="tl-tag">Current</span><h4>Product Refinement</h4></div>
+        <div class="tl-step now"><div class="tl-dot"></div><span class="tl-tag">Current</span><h4>Pilot</h4></div>
+        <div class="tl-step"><div class="tl-dot"></div><span class="tl-tag">Ahead</span><h4>Manufacturing Readiness</h4></div>
+        <div class="tl-step"><div class="tl-dot"></div><span class="tl-tag">Ahead</span><h4>Commercial Deployment</h4></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="on-teal cta-final">
+    <div class="wrap">
+      <h2 style="color:#fff;">A more accessible way forward.</h2>
+      <p style="color:#CFE6E5; margin:16px auto 32px;">We're building technology that helps people move through the world with greater confidence, independence and dignity.</p>
+      <button class="btn" style="background:#fff; color:var(--teal-deep);" onclick="go('steward')">Discover STEWARD</button>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============ STEWARD ============ -->
+<div class="page" id="page-steward">
+
+  <section class="hero" style="padding-bottom:40px;">
+    <div class="hex-field sparse" aria-hidden="true" style="height:420px;"></div>
+    <div class="wrap" style="position:relative; z-index:1; max-width:760px;">
+      <span class="label">STEWARD V.A.</span>
+      <h1 style="font-size:clamp(2rem,4vw,3.2rem);">See Beyond. Move Ahead. Live Freely.</h1>
+      <p class="lede" style="margin-top:18px;">A wearable AI assistant designed to help people who are blind or have low vision better understand their surroundings and perform selected everyday tasks.</p>
+    </div>
+    <div class="wrap" style="margin-top:40px; position:relative; z-index:1;">
+      <div class="product-banner reveal">
+        <img src="assets/images/steward-device-detail.jpg" width="1536" height="1024" alt="Concept of the compact STEWARD V.A. wearable device" loading="lazy">
+        <div class="device-caption">STEWARD V.A. product concept — compact, tactile and intentionally simple.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="on-warm">
+    <div class="wrap">
+      <div class="section-head"><span class="label">Product Capabilities</span><h2>What STEWARD does today.</h2></div>
+
+      <div class="cap-row">
+        <div><div class="cap-index">01</div><h3>Object Recognition</h3><p>Helps identify common objects within the user's environment.</p></div>
+        <div class="cap-visual"><svg viewBox="0 0 60 60"><rect x="12" y="12" width="36" height="36" rx="4" stroke="#0E6E73" stroke-width="2" fill="none"/><circle cx="30" cy="30" r="6" fill="#0E6E73"/></svg></div>
+      </div>
+      <div class="cap-row">
+        <div><div class="cap-index">02</div><h3>Text Reading</h3><p>Uses OCR technology to extract and read text from documents, signs, labels and other visual materials.</p></div>
+        <div class="cap-visual"><svg viewBox="0 0 60 60"><line x1="14" y1="20" x2="46" y2="20" stroke="#0E6E73" stroke-width="2"/><line x1="14" y1="30" x2="46" y2="30" stroke="#0E6E73" stroke-width="2"/><line x1="14" y1="40" x2="34" y2="40" stroke="#0E6E73" stroke-width="2"/></svg></div>
+      </div>
+      <div class="cap-row">
+        <div><div class="cap-index">03</div><h3>Currency Recognition</h3><p>Designed to recognize supported Ghanaian currency notes and provide audio feedback.</p></div>
+        <div class="cap-visual"><svg viewBox="0 0 60 60"><rect x="10" y="20" width="40" height="20" rx="2" stroke="#0E6E73" stroke-width="2" fill="none"/><circle cx="30" cy="30" r="5" stroke="#0E6E73" stroke-width="2" fill="none"/></svg></div>
+      </div>
+      <div class="cap-row">
+        <div><div class="cap-index">04</div><h3>Scene Description</h3><p>Provides useful descriptions of elements within the user's surroundings.</p></div>
+        <div class="cap-visual"><svg viewBox="0 0 60 60"><path d="M12 40 L24 24 L34 34 L42 20 L48 40 Z" stroke="#0E6E73" stroke-width="2" fill="none"/></svg></div>
+      </div>
+      <div class="cap-row">
+        <div><div class="cap-index">05</div><h3>Obstacle Detection</h3><p>Uses sensor technology to provide real-time environmental feedback about nearby obstacles.</p></div>
+        <div class="cap-visual"><svg viewBox="0 0 60 60"><circle cx="20" cy="30" r="4" fill="#0E6E73"/><path d="M28 30 Q36 30 36 20 M28 30 Q36 30 36 40" stroke="#0E6E73" stroke-width="2" fill="none"/></svg></div>
+      </div>
+      <div class="cap-row">
+        <div><div class="cap-index">06</div><h3>Navigation Support</h3><p>Provides audio guidance intended to support safer movement.</p></div>
+        <div class="cap-visual"><svg viewBox="0 0 60 60"><path d="M20 44 L30 12 L40 44 L30 34 Z" stroke="#0E6E73" stroke-width="2" fill="none"/></svg></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap" style="max-width:700px;">
+      <span class="label">Connectivity</span>
+      <h2>When connectivity isn't guaranteed.</h2>
+      <p style="margin-top:16px; font-size:1.05rem;">Selected STEWARD functions are designed to operate locally or offline, reducing dependence on continuous internet connectivity.</p>
+    </div>
+  </section>
+
+  <section class="on-grey">
+    <div class="wrap" style="max-width:700px;">
+      <span class="label">Design Philosophy</span>
+      <h2>Designed around people, not assumptions.</h2>
+      <p style="margin-top:16px; font-size:1.05rem;">STEWARD has evolved through direct interaction with visually impaired users. Their feedback has influenced the physical design, interaction model, camera positioning and system performance.</p>
+      <div style="margin-top:28px;"><button class="btn btn-ghost" onclick="go('progress')">See our progress</button></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap" style="max-width:760px;">
+      <span class="label">Current Status</span>
+      <h2>Pilot Development &amp; Commercialization Preparation</h2>
+      <p style="margin-top:16px; font-size:1.05rem;">STEWARD V.A. is currently undergoing pilot development and manufacturing preparation. Product features and performance continue to evolve through testing and user feedback.</p>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============ TECHNOLOGY ============ -->
+<div class="page" id="page-technology">
+
+  <section class="hero" style="padding-bottom:20px;">
+    <div class="hex-field dense" aria-hidden="true" style="height:340px;"></div>
+    <div class="wrap" style="position:relative; z-index:1; max-width:760px;">
+      <span class="label">Technology</span>
+      <h1 style="font-size:clamp(2rem,4vw,3.2rem);">Intelligence designed for the real world.</h1>
+    </div>
+  </section>
+
+  <section class="on-warm">
+    <div class="wrap">
+      <div class="section-head"><h2>The components behind STEWARD.</h2></div>
+      <div class="feature-grid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="feature-cell"><h3>Computer Vision</h3><p>Used for object recognition, scene understanding and visual interpretation.</p></div>
+        <div class="feature-cell"><h3>OCR</h3><p>Used to extract and read text from visual documents and environments.</p></div>
+        <div class="feature-cell"><h3>Machine Learning</h3><p>Recognition models are trained and evaluated for specific tasks.</p></div>
+        <div class="feature-cell"><h3>Sensor Technology</h3><p>Provides real-time environmental feedback for obstacle awareness.</p></div>
+        <div class="feature-cell"><h3>Edge / Local Processing</h3><p>Selected capabilities are designed to operate locally without continuous cloud connectivity.</p></div>
+        <div class="feature-cell"><h3>Audio Interaction</h3><p>Visual and system information is converted into understandable audio feedback.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap" style="max-width:720px;">
+      <span class="label">Data &amp; Localization</span>
+      <h2>Local data matters.</h2>
+      <p style="margin-top:16px;">During development, the team identified areas where suitable African datasets were limited.</p>
+      <p style="margin-top:12px;">For currency recognition, Ghanaian cedi notes were collected and used to train and evaluate the currency recognition models.</p>
+      <p style="margin-top:12px;">For object recognition, a combination of downloaded datasets and models trained by the team has been used for common objects.</p>
+    </div>
+  </section>
+
+  <section class="on-grey">
+    <div class="wrap">
+      <div class="section-head"><h2>Technology gets better when we listen.</h2></div>
+      <div class="process-list">
+        <div class="process-item"><div class="p-mark">Build</div><div><h3>Build</h3></div></div>
+        <div class="process-item"><div class="p-mark">Test</div><div><h3>Test</h3></div></div>
+        <div class="process-item"><div class="p-mark">Listen</div><div><h3>Listen</h3></div></div>
+        <div class="process-item"><div class="p-mark">Improve</div><div><h3>Improve</h3></div></div>
+        <div class="process-item"><div class="p-mark">Repeat</div><div><h3>Test Again</h3></div></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============ IMPACT ============ -->
+<div class="page" id="page-impact">
+
+  <section class="hero" style="padding-bottom:20px;">
+    <div class="hex-field sparse" aria-hidden="true" style="height:320px;"></div>
+    <div class="wrap" style="position:relative; z-index:1; max-width:760px;">
+      <span class="label">Impact</span>
+      <h1 style="font-size:clamp(2rem,4vw,3.2rem);">Independence is the impact.</h1>
+      <p class="lede" style="margin-top:16px;">Our goal is to develop technology that reduces everyday barriers and expands opportunities for people who are blind or have low vision.</p>
+    </div>
+  </section>
+
+  <section class="on-warm">
+    <div class="wrap">
+      <div class="section-head"><span class="label">Current Evidence</span><h2>What we've measured so far.</h2></div>
+      <div class="stat-row">
+        <div class="stat-block">
+          <div class="hex-num"><svg viewBox="0 0 112 128"><path d="M56 2 L110 32 L110 96 L56 126 L2 96 L2 32 Z" fill="none" stroke="#0E6E73" stroke-width="1.6"/></svg><span class="hex-value" data-count="6" data-suffix="">0</span></div>
+          <div class="stat-label">Structured validation participants.</div>
+        </div>
+        <div class="stat-block">
+          <div class="hex-num"><svg viewBox="0 0 112 128"><path d="M56 2 L110 32 L110 96 L56 126 L2 96 L2 32 Z" fill="none" stroke="#0E6E73" stroke-width="1.6"/></svg><span class="hex-value" data-count="87" data-suffix="%">0%</span></div>
+          <div class="stat-label">Prototype object-detection accuracy.</div>
+        </div>
+        <div class="stat-block">
+          <div class="hex-num"><svg viewBox="0 0 112 128"><path d="M56 2 L110 32 L110 96 L56 126 L2 96 L2 32 Z" fill="none" stroke="#0E6E73" stroke-width="1.6"/></svg><span class="hex-value" data-count="92" data-suffix="%">0%</span></div>
+          <div class="stat-label">Prototype currency-recognition accuracy.</div>
+        </div>
+      </div>
+      <div class="stage-note">These are prototype-stage results, not certified commercial performance figures.</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head"><span class="label">5-Year Targets</span><h2>Where we aim to be.</h2></div>
+      <div class="stat-row" style="grid-template-columns:repeat(4,1fr);">
+        <div><div class="stat-num">17,000</div><div class="stat-label">Target users reached.</div></div>
+        <div><div class="stat-num">25</div><div class="stat-label">Target direct jobs.</div></div>
+        <div><div class="stat-num">75</div><div class="stat-label">Target indirect jobs.</div></div>
+        <div><div class="stat-num">5+</div><div class="stat-label">Target African markets.</div></div>
+      </div>
+      <div class="stage-note">Projected targets, not achieved figures.</div>
+    </div>
+  </section>
+
+  <section class="on-grey">
+    <div class="wrap">
+      <div class="section-head"><h2>What success looks like.</h2></div>
+      <div class="pillar-grid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="pillar"><h3>Greater Independence</h3><p>Users can complete selected everyday tasks with less assistance.</p></div>
+        <div class="pillar"><h3>Reliable Assistance</h3><p>Core functions perform consistently in realistic environments.</p></div>
+        <div class="pillar"><h3>Accessibility</h3><p>The technology is usable by people with different levels of visual impairment.</p></div>
+        <div class="pillar"><h3>Local Relevance</h3><p>The product reflects African currencies, environments and progressively local languages.</p></div>
+        <div class="pillar"><h3>Economic Participation</h3><p>Greater independence can support participation in education, employment and everyday economic activity.</p></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============ PROGRESS ============ -->
+<div class="page" id="page-progress">
+
+  <section class="hero" style="padding-bottom:20px;">
+    <div class="hex-field dense" aria-hidden="true" style="height:320px;"></div>
+    <div class="wrap" style="position:relative; z-index:1; max-width:760px;">
+      <span class="label">Progress</span>
+      <h1 style="font-size:clamp(2rem,4vw,3.2rem);">Built. Tested. Improved.</h1>
+      <p class="lede" style="margin-top:16px;">STEWARD V.A. is being developed through an iterative process of building, testing and learning from real users.</p>
+    </div>
+  </section>
+
+  <section class="on-warm">
+    <div class="wrap" style="max-width:760px;">
+      <span class="label">User Validation</span>
+      <h2>We started by listening.</h2>
+      <p style="margin-top:16px;">A structured user validation exercise was conducted with six visually impaired participants.</p>
+      <p style="margin-top:12px;">The validation helped identify areas requiring improvement, including physical comfort, prototype size, button interaction, camera positioning, response latency, AI performance, audio feedback and general usability.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head"><h2>From feedback to change.</h2></div>
+      <div style="margin-top:40px;">
+        <div class="feedback-card">
+          <div><div class="ftag">Feedback</div><h4>Prototype Size</h4><p>Users reported that the earlier design was too large.</p></div>
+          <div class="arrow">→</div>
+          <div><div class="ftag">Design Response</div><h4>Compact Configuration</h4><p>The physical design was refined toward a more compact and wearable configuration.</p></div>
+        </div>
+        <div class="feedback-card">
+          <div><div class="ftag">Feedback</div><h4>Interaction</h4><p>Users requested simpler interaction.</p></div>
+          <div class="arrow">→</div>
+          <div><div class="ftag">Design Response</div><h4>Simplified Controls</h4><p>Button-based navigation was refined.</p></div>
+        </div>
+        <div class="feedback-card">
+          <div><div class="ftag">Feedback</div><h4>Camera Positioning</h4><p>Camera placement affected usability.</p></div>
+          <div class="arrow">→</div>
+          <div><div class="ftag">Design Response</div><h4>Refined Placement</h4><p>Camera integration and positioning were refined.</p></div>
+        </div>
+        <div class="feedback-card">
+          <div><div class="ftag">Feedback</div><h4>AI Performance</h4><p>Some environments affected recognition performance.</p></div>
+          <div class="arrow">→</div>
+          <div><div class="ftag">Design Response</div><h4>Ongoing Refinement</h4><p>Continued testing and model refinement.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="on-grey">
+    <div class="wrap" style="max-width:760px;">
+      <span class="label">Current Pilot</span>
+      <h2>From validated prototype to pilot.</h2>
+      <p style="margin-top:12px; font-weight:600; color:var(--ink);">Status: Early Pilot Development</p>
+      <p style="margin-top:12px;">The improved model is being evaluated with additional visually impaired users to understand its performance, usability and reliability under practical conditions.</p>
+
+      <div class="pilot-table">
+        <div class="pilot-cell"><div class="pv">—</div><div class="pl">Users</div></div>
+        <div class="pilot-cell"><div class="pv">—</div><div class="pl">Sessions</div></div>
+        <div class="pilot-cell"><div class="pv">—</div><div class="pl">Task Success</div></div>
+        <div class="pilot-cell"><div class="pv">—</div><div class="pl">Accuracy</div></div>
+        <div class="pilot-cell"><div class="pv">—</div><div class="pl">Response Time</div></div>
+        <div class="pilot-cell"><div class="pv">—</div><div class="pl">User Satisfaction</div></div>
+        <div class="pilot-cell" style="grid-column:span 2;"><div class="pv">—</div><div class="pl">Key Findings</div></div>
+      </div>
+      <div class="stage-note">Pilot results will be published here as data becomes available.</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head"><h2>Next milestones.</h2></div>
+      <div class="timeline">
+        <div class="tl-step now"><div class="tl-dot"></div><span class="tl-tag">Current</span><h4>Expanded Pilot</h4></div>
+        <div class="tl-step"><div class="tl-dot"></div><span class="tl-tag">Ahead</span><h4>Manufacturing Partner Selection</h4></div>
+        <div class="tl-step"><div class="tl-dot"></div><span class="tl-tag">Ahead</span><h4>Production Readiness</h4></div>
+        <div class="tl-step"><div class="tl-dot"></div><span class="tl-tag">Ahead</span><h4>Regulatory &amp; Compliance</h4></div>
+        <div class="tl-step"><div class="tl-dot"></div><span class="tl-tag">Ahead</span><h4>Initial Production</h4></div>
+        <div class="tl-step"><div class="tl-dot"></div><span class="tl-tag">Ahead</span><h4>Commercial Deployment</h4></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============ TEAM ============ -->
+<div class="page" id="page-team">
+
+  <section class="hero" style="padding-bottom:20px;">
+    <div class="hex-field sparse" aria-hidden="true" style="height:280px;"></div>
+    <div class="wrap" style="position:relative; z-index:1; max-width:760px;">
+      <span class="label">Team</span>
+      <h1 style="font-size:clamp(2rem,4vw,3.2rem);">The people behind BEACON.</h1>
+      <p class="lede" style="margin-top:16px;">A multidisciplinary team combining artificial intelligence, hardware, embedded systems and business development to turn practical ideas into usable technology.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-photo"><span>EQ</span></div>
+          <div class="team-body">
+            <h3>Emmanuel Boye Quartey</h3>
+            <div class="team-role">Founder / Project &amp; Business Lead</div>
+            <ul>
+              <li>Product direction</li>
+              <li>Business development</li>
+              <li>Partnerships</li>
+              <li>Commercialization</li>
+              <li>Strategy</li>
+            </ul>
+          </div>
+        </div>
+        <div class="team-card">
+          <div class="team-photo"><span>PB</span></div>
+          <div class="team-body">
+            <h3>Paul Bortey Bletcher</h3>
+            <div class="team-role">Technical Lead — AI &amp; Machine Learning</div>
+            <ul>
+              <li>AI/ML development</li>
+              <li>Computer vision</li>
+              <li>Model development</li>
+              <li>AI performance optimization</li>
+            </ul>
+          </div>
+        </div>
+        <div class="team-card">
+          <div class="team-photo"><span>FS</span></div>
+          <div class="team-body">
+            <h3>Fiagbedzi Samuel</h3>
+            <div class="team-role">Technical Lead — Hardware &amp; Embedded Systems</div>
+            <ul>
+              <li>Hardware development</li>
+              <li>Embedded systems</li>
+              <li>Electronics integration</li>
+              <li>Device development</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="on-warm center">
+    <div class="wrap">
+      <h2>Different expertise. One direction.</h2>
+      <div class="discipline-row">
+        <span class="d">AI</span><span class="x">×</span>
+        <span class="d">Hardware</span><span class="x">×</span>
+        <span class="d">Product</span><span class="x">×</span>
+        <span class="d">Business</span>
+      </div>
+      <p class="center" style="margin-top:8px;">We believe strong technology comes from combining different disciplines around one clear problem.</p>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============ ABOUT ============ -->
+<div class="page" id="page-about">
+
+  <section class="hero" style="padding-bottom:20px;">
+    <div class="hex-field dense" aria-hidden="true" style="height:280px;"></div>
+    <div class="wrap" style="position:relative; z-index:1; max-width:760px;">
+      <span class="label">About</span>
+      <h1 style="font-size:clamp(2rem,4vw,3.2rem);">Building technology with purpose.</h1>
+      <p class="lede" style="margin-top:16px;">BEACON is an early-stage African technology venture focused on developing practical technology solutions to real-world challenges. STEWARD V.A. is our flagship assistive technology product.</p>
+    </div>
+  </section>
+
+  <section class="on-warm">
+    <div class="wrap" style="display:grid; grid-template-columns:1fr 1fr; gap:48px;">
+      <div><span class="label">Mission</span><h3 style="font-size:1.4rem;">To develop accessible technology that helps people live with greater independence.</h3></div>
+      <div><span class="label">Vision</span><h3 style="font-size:1.4rem;">A future where useful technology is accessible to the people who need it most.</h3></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap" style="max-width:640px;">
+      <div class="section-head"><h2>Our approach.</h2></div>
+      <div class="approach-track">
+        <div class="approach-node"><div class="rail"><div class="dot"></div><div class="line"></div></div><div class="abody"><h4>Identify</h4><p>Find a real problem.</p></div></div>
+        <div class="approach-node"><div class="rail"><div class="dot"></div><div class="line"></div></div><div class="abody"><h4>Build</h4><p>Create a practical solution.</p></div></div>
+        <div class="approach-node"><div class="rail"><div class="dot"></div><div class="line"></div></div><div class="abody"><h4>Listen</h4><p>Put it in the hands of real users.</p></div></div>
+        <div class="approach-node"><div class="rail"><div class="dot"></div><div class="line"></div></div><div class="abody"><h4>Improve</h4><p>Use evidence and feedback.</p></div></div>
+        <div class="approach-node"><div class="rail"><div class="dot"></div></div><div class="abody"><h4>Deploy</h4><p>Turn working technology into useful products.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="on-grey">
+    <div class="wrap" style="max-width:520px;">
+      <div class="section-head"><h2>Our story.</h2></div>
+      <p class="story-line">Started with a problem.</p>
+      <p class="story-line">Built a prototype.</p>
+      <p class="story-line">Put it in front of users.</p>
+      <p class="story-line">Learned.</p>
+      <p class="story-line">Improved.</p>
+      <p class="story-line">Now preparing for scale.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head"><span class="label">Partners &amp; Supporters</span><h2>Organizations engaged with BEACON.</h2></div>
+      <div class="partner-grid">
+        <div class="partner-card"><span class="partner-tag">Validation</span><h3 style="font-size:1.1rem;">Ghana Blind Union</h3><p style="margin-top:8px; font-size:0.92rem;">Engaged as part of user validation and accessibility feedback. Logo displayed only with permission.</p></div>
+        <div class="partner-card"><span class="partner-tag">Support</span><h3 style="font-size:1.1rem;">Ghana Digital Centres Limited</h3><p style="margin-top:8px; font-size:0.92rem;">Engaged as a supporter of early-stage development. Logo displayed only with permission.</p></div>
+      </div>
+      <p style="margin-top:20px; font-size:0.85rem; color:var(--ink-faint);">We clearly distinguish between support, validation, partnership and commercial partnership, and do not imply a commercial partnership where one does not exist.</p>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============ CONTACT ============ -->
+<div class="page" id="page-contact">
+
+  <section class="hero" style="padding-bottom:20px;">
+    <div class="hex-field sparse" aria-hidden="true" style="height:260px;"></div>
+    <div class="wrap" style="position:relative; z-index:1; max-width:760px;">
+      <span class="label">Contact</span>
+      <h1 style="font-size:clamp(2rem,4vw,3.2rem);">Let's build a more accessible future.</h1>
+      <p class="lede" style="margin-top:16px;">We welcome conversations with organizations and individuals interested in assistive technology, accessibility, manufacturing, distribution, partnerships and investment.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap contact-grid">
+      <div>
+        <h3 style="margin-bottom:20px;">Reasons people reach out</h3>
+        <div class="cat-list">
+          <div class="cat-item"><strong>Partner with BEACON</strong><span>Collaboration and accessibility initiatives</span></div>
+          <div class="cat-item"><strong>Manufacturing</strong><span>Production and supply partnerships</span></div>
+          <div class="cat-item"><strong>Institutional Deployment</strong><span>Schools, NGOs, government bodies</span></div>
+          <div class="cat-item"><strong>Technology</strong><span>Technical collaboration and integration</span></div>
+          <div class="cat-item"><strong>Investment</strong><span>Funding and growth conversations</span></div>
+          <div class="cat-item"><strong>Media</strong><span>Press and coverage requests</span></div>
+          <div class="cat-item"><strong>General Enquiries</strong><span>Anything else</span></div>
+        </div>
+      </div>
+
+      <form class="contact-form" onsubmit="event.preventDefault(); alert('This is a demo form. Connect it to a real endpoint before launch.');">
+        <div class="form-row">
+          <div class="field"><label for="c-name">Name</label><input id="c-name" type="text" required autocomplete="name"></div>
+          <div class="field"><label for="c-org">Organization</label><input id="c-org" type="text" autocomplete="organization"></div>
+        </div>
+        <div class="form-row">
+          <div class="field"><label for="c-email">Email</label><input id="c-email" type="email" required autocomplete="email"></div>
+          <div class="field"><label for="c-phone">Phone</label><input id="c-phone" type="tel" autocomplete="tel"></div>
+        </div>
+        <div class="field">
+          <label for="c-reason">Reason for contacting</label>
+          <select id="c-reason">
+            <option>Partner with BEACON</option>
+            <option>Manufacturing</option>
+            <option>Institutional Deployment</option>
+            <option>Technology</option>
+            <option>Investment</option>
+            <option>Media</option>
+            <option>General Enquiries</option>
+          </select>
+        </div>
+        <div class="field"><label for="c-msg">Message</label><textarea id="c-msg" required></textarea></div>
+        <button type="submit" class="btn btn-primary" style="align-self:flex-start;">Send Message</button>
+        <p class="form-note">Your details will only be used to respond to your enquiry.</p>
+      </form>
+    </div>
+  </section>
+
+</div>
+
+</main>
+
+<div class="lightbox" id="galleryLightbox" role="dialog" aria-modal="true" aria-label="Gallery image viewer" aria-hidden="true">
+  <button class="lightbox-close" type="button" aria-label="Close image viewer">&times;</button>
+  <figure>
+    <img src="" alt="">
+    <figcaption></figcaption>
+  </figure>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a href="#" class="logo" onclick="go('home');return false;"><span class="logo-mark" aria-hidden="true"></span> BEACON</a>
+        <p class="foot-tag">Technology for greater human independence.</p>
+        <p class="foot-tag" style="margin-top:20px; color:#D8DACF;">STEWARD V.A. — See Beyond. Move Ahead. Live Freely.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Navigate</h4>
+        <ul>
+          <li><a href="#" onclick="go('home');return false;">Home</a></li>
+          <li><a href="#" onclick="go('steward');return false;">STEWARD V.A.</a></li>
+          <li><a href="#" onclick="go('technology');return false;">Technology</a></li>
+          <li><a href="#" onclick="go('impact');return false;">Impact</a></li>
+          <li><a href="#gallery-home" onclick="showGallery();return false;">Gallery</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#" onclick="go('progress');return false;">Progress</a></li>
+          <li><a href="#" onclick="go('team');return false;">Team</a></li>
+          <li><a href="#" onclick="go('about');return false;">About</a></li>
+          <li><a href="#" onclick="go('contact');return false;">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <p class="foot-disclaimer">STEWARD V.A. is currently undergoing pilot development and commercialization preparation. Product features, performance and availability may change as testing and development progress.</p>
+      <p>© 2026 BEACON. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const pages = ['home','steward','technology','impact','progress','team','about','contact'];
+  function showGallery(){
+    go('home');
+    window.setTimeout(()=>{
+      document.getElementById('gallery-home')?.scrollIntoView({behavior: reduceMotion ? 'auto' : 'smooth', block:'start'});
+    }, 40);
+  }
+  function go(page){
+    if(!pages.includes(page)) page = 'home';
+    pages.forEach(p=>{
+      document.getElementById('page-'+p).classList.toggle('active', p===page);
+    });
+    document.querySelectorAll('.navlink').forEach(btn=>{
+      if(btn.dataset.page === page){ btn.setAttribute('aria-current','page'); }
+      else{ btn.removeAttribute('aria-current'); }
+    });
+    const nav = document.getElementById('primaryNav');
+    nav.classList.remove('open');
+    document.getElementById('menuToggle').setAttribute('aria-expanded','false');
+    window.scrollTo({top:0, behavior:'auto'});
+    history.replaceState(null,'','#'+page);
+    if(window.activateRevealsIn) window.activateRevealsIn(document.getElementById('page-'+page));
+    document.title = page === 'home'
+      ? 'BEACON | Technology for Greater Human Independence'
+      : (page === 'steward' ? 'STEWARD V.A. | AI Vision Assistant | BEACON' : page.charAt(0).toUpperCase()+page.slice(1)+' | BEACON');
+  }
+  document.getElementById('menuToggle').addEventListener('click', function(){
+    const nav = document.getElementById('primaryNav');
+    const open = nav.classList.toggle('open');
+    this.setAttribute('aria-expanded', open ? 'true':'false');
+  });
+  window.addEventListener('load', function(){
+    const initial = location.hash.replace('#','');
+    go(pages.includes(initial) ? initial : 'home');
+  });
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Mark section headers and the hero device for a single quiet entrance each
+  document.querySelectorAll('.section-head, .device-art').forEach(el => el.classList.add('reveal'));
+
+  if(!reduceMotion && 'IntersectionObserver' in window){
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){
+          entry.target.classList.add('in-view');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.35 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    // Count-up for hex-value stats, once each, when scrolled into view
+    const counters = document.querySelectorAll('.hex-value');
+    const cio = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){
+          const el = entry.target;
+          const target = parseInt(el.dataset.count, 10);
+          const suffix = el.dataset.suffix || '';
+          const duration = 900;
+          const start = performance.now();
+          function tick(now){
+            const p = Math.min(1, (now - start) / duration);
+            const eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = Math.round(target * eased) + suffix;
+            if(p < 1) requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
+          cio.unobserve(el);
+        }
+      });
+    }, { threshold: 0.6 });
+    counters.forEach(el => cio.observe(el));
+  } else {
+    // Reduced motion or no observer support: show final states immediately
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('in-view'));
+    document.querySelectorAll('.hex-value').forEach(el => {
+      el.textContent = el.dataset.count + (el.dataset.suffix || '');
+    });
+  }
+
+  // Re-check reveals/counters for whatever page is now visible (handles hidden->shown timing)
+  window.activateRevealsIn = function(pageEl){
+    if(!pageEl) return;
+    requestAnimationFrame(()=>{
+      pageEl.querySelectorAll('.reveal:not(.in-view)').forEach(el=>{
+        const r = el.getBoundingClientRect();
+        if(r.top < window.innerHeight){ el.classList.add('in-view'); }
+      });
+      pageEl.querySelectorAll('.hex-value').forEach(el=>{
+        if(el.textContent.trim() === '0' || el.textContent.trim() === '0%'){
+          const r = el.getBoundingClientRect();
+          if(r.top < window.innerHeight * 1.2){
+            el.textContent = el.dataset.count + (el.dataset.suffix || '');
+          }
+        }
+      });
+    });
+  };
+
+  // Subtle cursor-following glow in the hero — desktop, motion-safe only
+  const heroGlow = document.getElementById('heroGlow');
+  if(heroGlow && !reduceMotion && window.matchMedia('(hover: hover)').matches){
+    document.querySelector('.hero').addEventListener('mousemove', (e)=>{
+      const rect = e.currentTarget.getBoundingClientRect();
+      heroGlow.style.setProperty('--gx', ((e.clientX - rect.left) / rect.width * 100) + '%');
+      heroGlow.style.setProperty('--gy', ((e.clientY - rect.top) / rect.height * 100) + '%');
+    });
+  }
+
+  // Accessible gallery viewer
+  const lightbox = document.getElementById('galleryLightbox');
+  const lightboxImage = lightbox.querySelector('img');
+  const lightboxCaption = lightbox.querySelector('figcaption');
+  const lightboxClose = lightbox.querySelector('.lightbox-close');
+  let galleryTrigger = null;
+
+  function closeLightbox(){
+    lightbox.classList.remove('open');
+    lightbox.setAttribute('aria-hidden','true');
+    document.body.style.overflow = '';
+    if(galleryTrigger) galleryTrigger.focus();
+  }
+
+  document.querySelectorAll('.gallery-card').forEach(card=>{
+    card.addEventListener('click',()=>{
+      galleryTrigger = card;
+      lightboxImage.src = card.dataset.full;
+      lightboxImage.alt = card.querySelector('img').alt;
+      lightboxCaption.textContent = card.dataset.caption;
+      lightbox.classList.add('open');
+      lightbox.setAttribute('aria-hidden','false');
+      document.body.style.overflow = 'hidden';
+      lightboxClose.focus();
+    });
+  });
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', e=>{ if(e.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', e=>{ if(e.key === 'Escape' && lightbox.classList.contains('open')) closeLightbox(); });
+</script>
+
+</body>
+</html>
