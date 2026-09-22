@@ -1,1 +1,1 @@
-# beacon_technologies_limited.com
+# beacon_technologies_ltd.com
